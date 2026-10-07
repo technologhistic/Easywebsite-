@@ -3,7 +3,7 @@
 > **The Precision Web Code & Asset Extraction Engine**  
 > Paste any website link to instantly extract its exact HTML, CSS, JavaScript, and media assets with interactive live preview and one-click Combined Build export.
 
----
+---NOTE:VERCEL ONLY PROVIDE DEPLOYMENTS NOT THE ENVIRONMENT FOR EXTRACTION OF CODE SO I HAVE. TO UPLOAD MY CODE TO GOOGLE AI STUDIO AND DEPLOY IT.
 
 ## ✨ Features
 
