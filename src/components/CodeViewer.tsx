@@ -47,7 +47,6 @@ export default function CodeViewer({
     downloadText(code, filename, mimeTypes[language] || 'text/plain');
   };
 
-  // Search match statistics
   const matchCount = useMemo(() => {
     if (!searchTerm.trim()) return 0;
     try {
@@ -61,9 +60,7 @@ export default function CodeViewer({
 
   return (
     <div className="w-full rounded-xl bg-stone-900 border border-stone-800 flex flex-col overflow-hidden shadow-xl">
-      {/* Code Viewer Toolbar */}
       <div className="px-4 py-3 bg-stone-950 border-b border-stone-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-        {/* Left: File metadata */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <FileCode2 className="w-4 h-4 text-amber-400" />
@@ -84,9 +81,7 @@ export default function CodeViewer({
           </div>
         </div>
 
-        {/* Right: Search & Actions */}
         <div className="flex items-center gap-2">
-          {/* Quick Search */}
           <div className="relative flex items-center">
             <Search className="w-3.5 h-3.5 absolute left-2.5 text-stone-400" />
             <input
@@ -103,7 +98,6 @@ export default function CodeViewer({
             )}
           </div>
 
-          {/* Toggle Wrap */}
           <button
             onClick={() => setWrapLines(!wrapLines)}
             className={`p-1.5 rounded border transition-colors ${
@@ -116,7 +110,6 @@ export default function CodeViewer({
             <WrapText className="w-3.5 h-3.5" />
           </button>
 
-          {/* Toggle Line numbers */}
           <button
             onClick={() => setShowLineNumbers(!showLineNumbers)}
             className={`px-2 py-1 rounded border text-[11px] font-mono transition-colors ${
@@ -129,7 +122,6 @@ export default function CodeViewer({
             #
           </button>
 
-          {/* Copy Button */}
           <button
             onClick={handleCopy}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 font-medium transition-colors"
@@ -147,7 +139,6 @@ export default function CodeViewer({
             )}
           </button>
 
-          {/* Download File */}
           <button
             onClick={handleDownload}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 border border-amber-400/30 transition-colors"
@@ -159,7 +150,6 @@ export default function CodeViewer({
         </div>
       </div>
 
-      {/* Source URL if external */}
       {sourceUrl && sourceUrl.startsWith('http') && (
         <div className="px-4 py-1.5 bg-stone-950/80 border-b border-stone-800/80 text-[11px] font-mono text-stone-400 flex items-center justify-between">
           <div className="truncate max-w-2xl">
@@ -177,7 +167,6 @@ export default function CodeViewer({
         </div>
       )}
 
-      {/* Code Text Content with Line Numbers */}
       <div className="relative font-mono text-xs sm:text-[13px] leading-relaxed overflow-x-auto max-h-[620px] overflow-y-auto selection:bg-amber-400/30 selection:text-white">
         <pre className="p-4 flex">
           {showLineNumbers && (
@@ -199,7 +188,6 @@ export default function CodeViewer({
             } text-stone-200 font-mono`}
           >
             {searchTerm.trim() ? (
-              // Highlight matched lines or search terms
               lines.map((line, idx) => {
                 const isMatch = line.toLowerCase().includes(searchTerm.toLowerCase());
                 return (

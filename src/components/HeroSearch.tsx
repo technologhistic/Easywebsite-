@@ -40,12 +40,10 @@ export default function HeroSearch({
   return (
     <section className="w-full pt-12 pb-8 border-b border-stone-800/80 bg-gradient-to-b from-stone-900/50 to-transparent">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        {/* Editorial Subtitle */}
         <p className="text-xs uppercase tracking-widest font-mono text-amber-400 mb-2">
           Universal Web Deconstruction Suite
         </p>
 
-        {/* Hero Title */}
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-stone-100 tracking-tight leading-tight text-balance">
           Extract exact HTML, CSS & JavaScript from any website.
         </h1>
@@ -55,7 +53,6 @@ export default function HeroSearch({
           embedded scripts, media assets, and a standalone single-file build bundle.
         </p>
 
-        {/* Main Search Input Form */}
         <form onSubmit={handleSubmit} className="mt-8 relative max-w-2xl mx-auto">
           <div className="flex items-center rounded-xl bg-stone-900/90 border border-stone-700/80 p-1.5 shadow-2xl focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-400/20 transition-all">
             <div className="pl-3.5 pr-2 text-stone-400 flex items-center">
@@ -92,7 +89,6 @@ export default function HeroSearch({
             </button>
           </div>
 
-          {/* Error Message if any */}
           {error && (
             <div className="mt-3 p-3 rounded-lg bg-rose-950/50 border border-rose-800/80 text-rose-200 text-xs text-left flex items-start gap-2">
               <span className="font-semibold uppercase tracking-wider text-rose-400 font-mono">Error:</span>
@@ -101,7 +97,6 @@ export default function HeroSearch({
           )}
         </form>
 
-        {/* Curated Sample Links */}
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs">
           <span className="text-stone-400 font-mono">Quick test:</span>
           {SAMPLE_SITES.map((site) => (
@@ -118,7 +113,6 @@ export default function HeroSearch({
           ))}
         </div>
 
-        {/* Recent extractions history */}
         {recentList.length > 0 && (
           <div className="mt-6 pt-5 border-t border-stone-800/60 max-w-xl mx-auto flex items-center justify-between text-xs text-stone-400">
             <div className="flex items-center gap-2 overflow-x-auto py-1">

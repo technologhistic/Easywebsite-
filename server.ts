@@ -9,8 +9,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
 interface ExtractedAsset {
   type: 'image' | 'svg' | 'font' | 'icon';
@@ -71,7 +71,6 @@ interface ExtractionResult {
   };
 }
 
-// Helpers
 function normalizeUrl(inputUrl: string): string {
   let trimmed = inputUrl.trim();
   if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
@@ -102,7 +101,6 @@ function resolveAbsoluteUrl(relativeOrAbsolute: string, baseUrl: string): string
   }
 }
 
-// Safe fetch with user agent and timeout
 async function safeFetch(url: string, timeoutMs = 8000, asText = true): Promise<{ ok: boolean; status: number; text?: string; buffer?: ArrayBuffer; headers: Headers; url: string; error?: string }> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -163,13 +161,11 @@ async function safeFetch(url: string, timeoutMs = 8000, asText = true): Promise<
   }
 }
 
-// Simple HTML Formatter / Beautifier
 function formatHtml(html: string): string {
   let formatted = '';
   let indent = 0;
   const tab = '  ';
 
-  // Tokenize tags and text
   const tokens = html.replace(/>\s*</g, '><').split(/(<[^>]+>)/g).filter(Boolean);
 
   const voidTags = new Set([
@@ -200,26 +196,22 @@ function formatHtml(html: string): string {
   return formatted.trim() || html;
 }
 
-// Basic CSS beautifier
 function formatCss(css: string): string {
-  let formatted = css
+  return css
     .replace(/\s+/g, ' ')
     .replace(/\s*{\s*/g, ' {\n  ')
     .replace(/;\s*/g, ';\n  ')
     .replace(/\s*}\s*/g, '\n}\n\n')
-    .replace(/,\s*/g, ', ');
-
-  return formatted.trim();
+    .replace(/,\s*/g, ', ')
+    .trim();
 }
 
-// Tech detection heuristic
 function detectTechnologies(html: string, stylesheets: StylesheetResource[], scripts: ScriptResource[]): string[] {
   const techs = new Set<string>();
   const lowerHtml = html.toLowerCase();
-  const allCss = stylesheets.map(s => s.content.toLowerCase()).join(' ');
-  const allJs = scripts.map(s => s.url.toLowerCase() + ' ' + s.content.slice(0, 5000).toLowerCase()).join(' ');
+  const allCss = stylesheets.map((s) => s.content.toLowerCase()).join(' ');
+  const allJs = scripts.map((s) => s.url.toLowerCase() + ' ' + s.content.slice(0, 5000).toLowerCase()).join(' ');
 
-  // Frameworks & Libraries
   if (lowerHtml.includes('__next_data__') || allJs.includes('_next/static') || lowerHtml.includes('/_next/')) {
     techs.add('Next.js');
     techs.add('React');
@@ -247,7 +239,6 @@ function detectTechnologies(html: string, stylesheets: StylesheetResource[], scr
     techs.add('Shopify');
   }
 
-  // CSS Frameworks
   if (lowerHtml.includes('tailwind') || allCss.includes('tailwindcss') || (lowerHtml.includes('flex') && lowerHtml.includes('items-center') && lowerHtml.includes('justify-between'))) {
     techs.add('Tailwind CSS');
   }
@@ -291,7 +282,6 @@ app.post('/api/extract', async (req, res) => {
 
     const normalized = normalizeUrl(rawUrl);
 
-    // Validate URL
     let parsedUrl: URL;
     try {
       parsedUrl = new URL(normalized);
@@ -304,7 +294,6 @@ app.post('/api/extract', async (req, res) => {
       return;
     }
 
-    // Step 1: Fetch HTML document
     const mainFetch = await safeFetch(parsedUrl.href, 12000, true);
     if (!mainFetch.ok || !mainFetch.text) {
       res.status(502).json({
@@ -317,15 +306,12 @@ app.post('/api/extract', async (req, res) => {
     const finalUrl = mainFetch.url || parsedUrl.href;
     const rawHtml = mainFetch.text;
 
-    // Load with Cheerio
     const $ = cheerio.load(rawHtml);
 
-    // Title & Favicon
     const title = $('title').first().text().trim() || parsedUrl.hostname;
     let favicon = $('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]').first().attr('href') || '/favicon.ico';
     favicon = resolveAbsoluteUrl(favicon, finalUrl);
 
-    // Meta tags
     const meta: Record<string, string> = {};
     $('meta').each((_, el) => {
       const name = $(el).attr('name') || $(el).attr('property') || $(el).attr('http-equiv');
@@ -335,10 +321,8 @@ app.post('/api/extract', async (req, res) => {
       }
     });
 
-    // Step 2: Extract External and Inline Stylesheets
     const rawStylesheets: Array<{ url?: string; isExternal: boolean; content?: string }> = [];
 
-    // Find <link rel="stylesheet">
     $('link[rel*="stylesheet"], link[as="style"]').each((_, el) => {
       const href = $(el).attr('href');
       if (href) {
@@ -350,8 +334,7 @@ app.post('/api/extract', async (req, res) => {
       }
     });
 
-    // Find inline <style>
-    $('style').each((idx, el) => {
+    $('style').each((_, el) => {
       const styleContent = $(el).html() || '';
       if (styleContent.trim()) {
         rawStylesheets.push({
@@ -361,7 +344,6 @@ app.post('/api/extract', async (req, res) => {
       }
     });
 
-    // Step 3: Extract External and Inline Scripts
     const rawScripts: Array<{ url?: string; isExternal: boolean; isModule: boolean; content?: string }> = [];
 
     $('script').each((_, el) => {
@@ -388,7 +370,6 @@ app.post('/api/extract', async (req, res) => {
       }
     });
 
-    // Step 4: Extract Media Assets
     const assets: ExtractedAsset[] = [];
     const seenAssets = new Set<string>();
 
@@ -410,7 +391,6 @@ app.post('/api/extract', async (req, res) => {
       }
     });
 
-    // Favicon as asset
     if (!seenAssets.has(favicon) && favicon.startsWith('http')) {
       seenAssets.add(favicon);
       assets.push({
@@ -422,10 +402,8 @@ app.post('/api/extract', async (req, res) => {
       });
     }
 
-    // SVG tags count
     $('svg').each((idx) => {
       if (idx < 10) {
-        // limit count
         assets.push({
           type: 'svg',
           url: '',
@@ -436,7 +414,6 @@ app.post('/api/extract', async (req, res) => {
       }
     });
 
-    // Step 5: Concurrently fetch external stylesheets (capped to 15 to stay fast and resilient)
     const stylesheetPromises = rawStylesheets.slice(0, 15).map(async (item, index): Promise<StylesheetResource> => {
       if (!item.isExternal) {
         const formatted = formatCss(item.content || '');
@@ -479,7 +456,6 @@ app.post('/api/extract', async (req, res) => {
       }
     });
 
-    // Step 6: Concurrently fetch external scripts (capped to 15)
     const scriptPromises = rawScripts.slice(0, 15).map(async (item, index): Promise<ScriptResource> => {
       if (!item.isExternal) {
         return {
@@ -529,22 +505,16 @@ app.post('/api/extract', async (req, res) => {
       Promise.all(scriptPromises),
     ]);
 
-    // Build Unified CSS
     const unifiedCss = stylesheets
       .map((s) => `/* ==========================================\n   File: ${s.name} (${s.url})\n   ========================================== */\n${s.content}\n`)
       .join('\n\n');
 
-    // Build Unified JS
     const unifiedJs = scripts
       .map((s) => `// ==========================================\n// Script: ${s.name} (${s.url})\n// ==========================================\n${s.content}\n`)
       .join('\n\n');
 
-    // Create Reconstructed Self-Contained Bundle HTML
-    // We rewrite all relative images, anchors, styles, scripts to point to absolute URLs
-    // so that opening the bundle produces the complete visuals without missing assets!
     const $bundle = cheerio.load(rawHtml);
 
-    // Rewrite images to absolute
     $bundle('img').each((_, el) => {
       const src = $bundle(el).attr('src');
       if (src) {
@@ -552,7 +522,6 @@ app.post('/api/extract', async (req, res) => {
       }
     });
 
-    // Rewrite links to absolute
     $bundle('a').each((_, el) => {
       const href = $bundle(el).attr('href');
       if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
@@ -560,8 +529,6 @@ app.post('/api/extract', async (req, res) => {
       }
     });
 
-    // In bundle, replace external stylesheets with the fetched CSS in <style>
-    // or insert unified CSS
     $bundle('link[rel*="stylesheet"]').remove();
     $bundle('head').append(`\n  <style id="easywebsite-extracted-styles">\n${unifiedCss}\n  </style>\n`);
 
@@ -569,10 +536,8 @@ app.post('/api/extract', async (req, res) => {
     const formattedHtml = formatHtml(rawHtml);
     const cleanedBodyHtml = formatHtml($('body').html() || '');
 
-    // Detect Technologies
     const detectedTech = detectTechnologies(rawHtml, stylesheets, scripts);
 
-    // Compute Totals
     const totalCssBytes = stylesheets.reduce((acc, s) => acc + s.sizeBytes, 0);
     const totalJsBytes = scripts.reduce((acc, s) => acc + s.sizeBytes, 0);
 
@@ -615,7 +580,7 @@ app.post('/api/extract', async (req, res) => {
   }
 });
 
-// Proxy route for sandboxed iframe assets or images that have strict referrers
+// Proxy route for sandboxed iframe assets or media download in Combined Build
 app.get('/api/proxy', async (req, res) => {
   const target = req.query.url as string;
   if (!target) {
@@ -646,7 +611,6 @@ async function startServer() {
       res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     });
   } else {
-    // Dynamic import vite for dev mode
     const { createServer } = await import('vite');
     const vite = await createServer({
       server: { middlewareMode: true },

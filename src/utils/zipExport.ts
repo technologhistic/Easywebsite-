@@ -26,13 +26,9 @@ export function downloadText(text: string, filename: string, mimeType = 'text/pl
   downloadBlob(blob, filename);
 }
 
-/**
- * Standard project zip generator (HTML, CSS, JS, without fetching remote media binaries)
- */
 export async function generateProjectZip(data: ExtractionResult): Promise<Blob> {
   const zip = new JSZip();
 
-  // 1. Cleaned index.html linking to external style.css and app.js
   const cleanIndexHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,7 +46,6 @@ ${data.cleanedBodyHtml}
 
   zip.file('index.html', cleanIndexHtml);
 
-  // 2. css/style.css
   const cssFolder = zip.folder('css');
   if (cssFolder) {
     cssFolder.file('style.css', data.unifiedCss || '/* No CSS extracted */');
@@ -61,7 +56,6 @@ ${data.cleanedBodyHtml}
     });
   }
 
-  // 3. js/app.js
   const jsFolder = zip.folder('js');
   if (jsFolder) {
     jsFolder.file('app.js', data.unifiedJs || '// No JavaScript extracted');
@@ -72,10 +66,8 @@ ${data.cleanedBodyHtml}
     });
   }
 
-  // 4. Standalone all-in-one HTML
   zip.file('standalone-bundle.html', data.reconstructedBundleHtml);
 
-  // 5. README.md
   const readmeContent = `# ${data.title}
 
 > Extracted via easywebsite on ${new Date(data.stats.extractedAt).toLocaleString()}
@@ -84,22 +76,18 @@ ${data.cleanedBodyHtml}
 ## Project Contents
 
 - **\`index.html\`**: Main webpage markup linked to modular CSS and JS files.
-- **\`css/style.css\`**: Combined and organized stylesheet with all extracted rules.
-- **\`css/individual/\`**: Original individual CSS stylesheets from the source.
+- **\`css/style.css\`**: Combined stylesheet with all extracted rules.
 - **\`js/app.js\`**: Combined scripts and runtime logic.
-- **\`js/individual/\`**: Original individual script files from the source.
-- **\`standalone-bundle.html\`**: Completely self-contained single-file version with inlined assets.
+- **\`standalone-bundle.html\`**: Completely self-contained single-file version.
 
 ## How to Run Locally
 
 \`\`\`bash
-# Using Python
-python3 -m http.server 8000
-
 # Using Node.js npx
 npx serve .
 
-# Or simply double-click index.html or standalone-bundle.html in your browser
+# Or using Python
+python3 -m http.server 8000
 \`\`\`
 
 ---
@@ -111,13 +99,6 @@ npx serve .
   return await zip.generateAsync({ type: 'blob' });
 }
 
-/**
- * COMBINED BUILD:
- * Downloads ALL CSS, HTML, JavaScript AND actually fetches and downloads
- * all media (images, SVGs, and favicons) into a dedicated `media/` folder,
- * rewrites references in the HTML and CSS, and packages everything together into
- * an offline-ready bundle.
- */
 export async function generateCombinedBuildZip(
   data: ExtractionResult,
   onProgress?: (message: string, percent: number) => void
@@ -126,11 +107,10 @@ export async function generateCombinedBuildZip(
   onProgress?.('Initializing Combined Build workspace...', 5);
 
   const mediaFolder = zip.folder('media');
-  const mediaMap = new Map<string, string>(); // originalUrl -> localPath (e.g. 'media/asset-1.png')
+  const mediaMap = new Map<string, string>();
 
-  // Identify valid media assets to download
   const validAssets = data.assets.filter((a) => a.url && a.url.startsWith('http'));
-  const totalAssets = Math.min(validAssets.length, 40); // Cap at 40 to maintain fast generation
+  const totalAssets = Math.min(validAssets.length, 40);
 
   let downloadedMediaCount = 0;
 
@@ -163,20 +143,18 @@ export async function generateCombinedBuildZip(
         }
       }
     } catch {
-      // Gracefully continue with remaining media
+      // Gracefully continue
     }
   }
 
   onProgress?.('Re-linking media paths and stitching Combined Build...', 75);
 
-  // 1. Rewrite combined standalone HTML with local media references
   let combinedStandaloneHtml = data.reconstructedBundleHtml;
   mediaMap.forEach((localPath, originalUrl) => {
     combinedStandaloneHtml = combinedStandaloneHtml.split(originalUrl).join(localPath);
   });
   zip.file('combined-build.html', combinedStandaloneHtml);
 
-  // 2. Clean index.html with local modular references
   let combinedIndexHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -197,7 +175,6 @@ ${data.cleanedBodyHtml}
   });
   zip.file('index.html', combinedIndexHtml);
 
-  // 3. Combined CSS (with relative paths to media folder)
   const cssFolder = zip.folder('css');
   if (cssFolder) {
     let rewrittenCss = data.unifiedCss;
@@ -207,13 +184,11 @@ ${data.cleanedBodyHtml}
     cssFolder.file('combined.css', rewrittenCss);
   }
 
-  // 4. Combined JS
   const jsFolder = zip.folder('js');
   if (jsFolder) {
     jsFolder.file('combined.js', data.unifiedJs || '// Combined Build JavaScript');
   }
 
-  // 5. Media Manifest
   const manifest = {
     title: data.title,
     sourceUrl: data.finalUrl,
@@ -228,7 +203,6 @@ ${data.cleanedBodyHtml}
   };
   zip.file('media-manifest.json', JSON.stringify(manifest, null, 2));
 
-  // 6. Comprehensive README
   const readme = `# ${data.title} — Combined Build
 
 This is a complete, self-contained **Combined Build** packaged by easywebsite.

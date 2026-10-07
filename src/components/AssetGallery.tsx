@@ -27,7 +27,6 @@ export default function AssetGallery({ assets }: AssetGalleryProps) {
 
   return (
     <div className="w-full rounded-xl bg-stone-900 border border-stone-800 flex flex-col overflow-hidden shadow-xl">
-      {/* Header toolbar */}
       <div className="px-4 py-3 bg-stone-950 border-b border-stone-800 flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2">
           <ImageIcon className="w-4 h-4 text-amber-400" />
@@ -35,7 +34,6 @@ export default function AssetGallery({ assets }: AssetGalleryProps) {
           <span className="text-stone-400 font-mono text-[11px]">({assets.length} items)</span>
         </div>
 
-        {/* Filter buttons */}
         <div className="flex items-center gap-1 bg-stone-900 p-1 rounded-lg border border-stone-800">
           <Filter className="w-3.5 h-3.5 text-stone-400 ml-1.5 mr-1" />
           <button
@@ -81,7 +79,6 @@ export default function AssetGallery({ assets }: AssetGalleryProps) {
         </div>
       </div>
 
-      {/* Asset Grid */}
       <div className="p-4 sm:p-6 bg-stone-900">
         {filteredAssets.length === 0 ? (
           <div className="py-16 text-center text-stone-400 text-sm">
@@ -94,7 +91,6 @@ export default function AssetGallery({ assets }: AssetGalleryProps) {
                 key={idx}
                 className="group rounded-lg bg-stone-950 border border-stone-800 hover:border-amber-400/50 transition-all overflow-hidden flex flex-col"
               >
-                {/* Visual preview box */}
                 <div className="aspect-square bg-stone-900 flex items-center justify-center p-3 relative overflow-hidden">
                   {asset.url ? (
                     <img
@@ -103,7 +99,6 @@ export default function AssetGallery({ assets }: AssetGalleryProps) {
                       referrerPolicy="no-referrer"
                       className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
-                        // Fallback container on failure
                         const target = e.target as HTMLElement;
                         target.style.display = 'none';
                         const parent = target.parentElement;
@@ -131,7 +126,6 @@ export default function AssetGallery({ assets }: AssetGalleryProps) {
                   </span>
                 </div>
 
-                {/* Info & Actions */}
                 <div className="p-2.5 flex-1 flex flex-col justify-between border-t border-stone-800/80">
                   <div className="text-xs font-mono text-stone-300 truncate" title={asset.name}>
                     {asset.name}

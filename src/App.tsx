@@ -16,15 +16,11 @@ import {
   Eye,
   Images,
   Layers,
-  Download,
   ExternalLink,
   Copy,
   Check,
   Sparkles,
-  FileCode2,
-  FolderArchive,
   ArrowUpRight,
-  ShieldAlert,
   PackageCheck,
   Loader2,
   CheckCircle2,
@@ -113,7 +109,6 @@ export default function App() {
       setSelectedCssTab('unified');
       setSelectedJsTab('unified');
 
-      // Scroll smoothly to results
       setTimeout(() => {
         document.getElementById('workspace-results')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
@@ -122,18 +117,6 @@ export default function App() {
       setError(message);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  // Quick ZIP Download (Code only)
-  const handleDownloadZip = async () => {
-    if (!result) return;
-    try {
-      const zipBlob = await generateProjectZip(result);
-      const safeTitle = result.title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30) || 'website';
-      downloadBlob(zipBlob, `${safeTitle}-code.zip`);
-    } catch (e) {
-      console.error(e);
     }
   };
 
@@ -197,7 +180,6 @@ export default function App() {
     }
   };
 
-  // Active CSS selection
   const activeCssResource =
     selectedCssTab === 'unified'
       ? {
@@ -215,7 +197,6 @@ export default function App() {
           isExternal: false,
         };
 
-  // Active JS selection
   const activeJsResource =
     selectedJsTab === 'unified'
       ? {
@@ -235,7 +216,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans selection:bg-amber-400 selection:text-stone-950">
-      {/* Top Bar */}
       <Header
         onSelectSample={(sampleUrl) => {
           setUrl(sampleUrl);
@@ -247,7 +227,6 @@ export default function App() {
       />
 
       <main className="flex-1">
-        {/* Hero Section & Search Bar */}
         <HeroSearch
           url={url}
           setUrl={setUrl}
@@ -262,17 +241,14 @@ export default function App() {
           error={error}
         />
 
-        {/* Loading State Animation */}
         {isLoading && (
           <div className="px-4">
             <LoadingAnimation url={url} onCancel={() => setIsLoading(false)} />
           </div>
         )}
 
-        {/* Workspace Results Section */}
         {result && !isLoading && (
           <section id="workspace-results" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-            {/* Site Overview Banner */}
             <div className="p-5 sm:p-6 rounded-2xl bg-stone-900 border border-stone-800 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
@@ -291,7 +267,6 @@ export default function App() {
                   </h2>
                 </div>
 
-                {/* Clean unboxed metadata with typographic separators (Rule A) */}
                 <div className="flex flex-wrap items-center gap-2 text-xs text-stone-400 font-mono">
                   <a
                     href={result.finalUrl}
@@ -314,7 +289,6 @@ export default function App() {
                   <span className="tabular-nums font-semibold text-stone-300">{result.stats.responseTimeMs}ms</span>
                 </div>
 
-                {/* Detected tech tags */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
                   <span className="text-[11px] text-stone-400 font-mono mr-1">Stack:</span>
                   {result.detectedTech.map((tech) => (
@@ -328,7 +302,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                 <button
                   onClick={handleCopyCurrent}
@@ -355,7 +328,6 @@ export default function App() {
                   <span>Interactive Preview</span>
                 </button>
 
-                {/* Prominent Combined Build Button */}
                 <button
                   onClick={handleDownloadCombinedBuild}
                   disabled={isBuildingCombinedTop}
@@ -382,7 +354,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Floating Live Progress for Combined Build */}
             {isBuildingCombinedTop && (
               <div className="p-4 rounded-xl bg-amber-950/60 border border-amber-400/50 shadow-xl space-y-2 animate-in fade-in">
                 <div className="flex items-center justify-between text-xs font-mono">
@@ -401,7 +372,6 @@ export default function App() {
               </div>
             )}
 
-            {/* Navigation Tabs Bar */}
             <div className="flex items-center gap-1 overflow-x-auto border-b border-stone-800 pb-px text-xs font-medium">
               <button
                 onClick={() => setActiveTab('html')}
@@ -500,10 +470,8 @@ export default function App() {
               </button>
             </div>
 
-            {/* TAB CONTENT: HTML */}
             {activeTab === 'html' && (
               <div className="space-y-4">
-                {/* HTML Mode Sub-Tabs */}
                 <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-1 bg-stone-900 p-1 rounded-lg border border-stone-800">
                     <button
@@ -579,10 +547,8 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB CONTENT: CSS */}
             {activeTab === 'css' && (
               <div className="space-y-4">
-                {/* CSS File Selector Sub-Bar */}
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
                   <button
                     onClick={() => setSelectedCssTab('unified')}
@@ -627,10 +593,8 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB CONTENT: JAVASCRIPT */}
             {activeTab === 'js' && (
               <div className="space-y-4">
-                {/* JS File Selector Sub-Bar */}
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
                   <button
                     onClick={() => setSelectedJsTab('unified')}
@@ -680,7 +644,6 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB CONTENT: PREVIEW */}
             {activeTab === 'preview' && (
               <LivePreview
                 bundleHtml={result.reconstructedBundleHtml}
@@ -690,10 +653,8 @@ export default function App() {
               />
             )}
 
-            {/* TAB CONTENT: ASSETS */}
             {activeTab === 'assets' && <AssetGallery assets={result.assets} />}
 
-            {/* TAB CONTENT: META & SEO */}
             {activeTab === 'meta' && (
               <MetaInspector
                 meta={result.meta}
@@ -704,12 +665,10 @@ export default function App() {
               />
             )}
 
-            {/* TAB CONTENT: BUILD EXPORT */}
             {activeTab === 'export' && <ProjectExport data={result} />}
           </section>
         )}
 
-        {/* Informational / How It Works Section (Classic Editorial) */}
         <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-stone-900 mt-12">
           <div className="max-w-2xl mb-12">
             <span className="text-xs uppercase font-mono tracking-widest text-amber-400 font-medium">
@@ -756,18 +715,16 @@ export default function App() {
                 <Sparkles className="w-5 h-5" />
               </div>
               <h3 className="text-base font-semibold text-stone-200">
-                03. Self-Contained Bundling
+                03. Self-Contained Bundling &amp; Media
               </h3>
               <p className="text-xs text-stone-400 leading-relaxed">
-                Resolves relative asset paths so images, icons, and web fonts do not break when opened offline. Generates
-                a downloadable ZIP archive containing <code className="text-amber-300">index.html</code>, <code className="text-amber-300">style.css</code>, and <code className="text-amber-300">app.js</code>.
+                Resolves relative asset paths, downloads all media into <code className="text-amber-300">media/</code>, and creates the one-click <code className="text-amber-300">Combined Build</code> package for completely offline viewing.
               </p>
             </div>
           </div>
         </section>
       </main>
 
-      {/* Classic Editorial Footer */}
       <footer className="w-full border-t border-stone-800 bg-stone-950 py-8 px-4 sm:px-6 lg:px-8 text-xs text-stone-400">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
@@ -779,7 +736,7 @@ export default function App() {
           <div className="flex items-center gap-6 font-mono text-[11px] text-stone-400">
             <span>Client-Server Architecture</span>
             <span className="text-stone-400">·</span>
-            <span>Sandboxed IFrame Protocol</span>
+            <span>Combined Build Engine</span>
           </div>
         </div>
       </footer>

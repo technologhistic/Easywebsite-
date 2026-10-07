@@ -32,7 +32,6 @@ export default function ProjectExport({ data }: ProjectExportProps) {
   const [isZippingStandard, setIsZippingStandard] = useState(false);
   const [standardSuccess, setStandardSuccess] = useState(false);
 
-  // 1. Download Combined Build (.ZIP with all HTML, CSS, JS, Media)
   const handleDownloadCombinedZip = async () => {
     setIsBuildingCombined(true);
     setCombinedPercent(5);
@@ -58,13 +57,11 @@ export default function ProjectExport({ data }: ProjectExportProps) {
     }
   };
 
-  // 2. Download Combined Build (.HTML standalone)
   const handleDownloadCombinedHtml = () => {
     const safeTitle = data.title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30) || 'website';
     downloadText(data.reconstructedBundleHtml, `${safeTitle}-combined-build.html`, 'text/html');
   };
 
-  // 3. Download Standard Code-only ZIP
   const handleDownloadStandardZip = async () => {
     setIsZippingStandard(true);
     try {
@@ -84,9 +81,7 @@ export default function ProjectExport({ data }: ProjectExportProps) {
 
   return (
     <div className="w-full space-y-6">
-      {/* FEATURED: COMBINED BUILD HERO CARD */}
       <div className="rounded-2xl bg-gradient-to-br from-amber-950/40 via-stone-900 to-stone-950 border-2 border-amber-400/50 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-        {/* Subtle accent glow */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -108,7 +103,6 @@ export default function ProjectExport({ data }: ProjectExportProps) {
               Downloads a complete offline package containing <strong>all HTML, CSS, JavaScript, and extracted media assets</strong> (images, SVGs, and favicons). Media paths are automatically re-linked locally so the site runs 100% offline.
             </p>
 
-            {/* Included components badges */}
             <div className="flex flex-wrap items-center gap-2 pt-1 text-xs font-mono text-stone-300">
               <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-stone-950/80 border border-stone-800">
                 <FileCode className="w-3.5 h-3.5 text-emerald-400" />
@@ -129,9 +123,7 @@ export default function ProjectExport({ data }: ProjectExportProps) {
             </div>
           </div>
 
-          {/* Action buttons for Combined Build */}
           <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
-            {/* Download Combined Build ZIP */}
             <button
               onClick={handleDownloadCombinedZip}
               disabled={isBuildingCombined}
@@ -155,7 +147,6 @@ export default function ProjectExport({ data }: ProjectExportProps) {
               )}
             </button>
 
-            {/* Download Combined Build HTML (Single-file) */}
             <button
               onClick={handleDownloadCombinedHtml}
               className="px-5 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-200 border border-amber-400/30 hover:border-amber-400/60 font-medium text-xs sm:text-sm transition-all flex items-center justify-center gap-2"
@@ -166,7 +157,6 @@ export default function ProjectExport({ data }: ProjectExportProps) {
           </div>
         </div>
 
-        {/* Live progress indicator during Combined Build */}
         {isBuildingCombined && (
           <div className="mt-6 pt-5 border-t border-amber-400/20 space-y-2">
             <div className="flex items-center justify-between text-xs font-mono">
@@ -183,9 +173,7 @@ export default function ProjectExport({ data }: ProjectExportProps) {
         )}
       </div>
 
-      {/* ADDITIONAL EXPORT FORMATS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Standard Code Export */}
         <div className="rounded-xl bg-stone-900 border border-stone-800 p-5 shadow-xl flex flex-col justify-between">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
@@ -195,7 +183,7 @@ export default function ProjectExport({ data }: ProjectExportProps) {
               </h4>
             </div>
             <p className="text-xs text-stone-400 leading-relaxed">
-              Includes <code className="text-stone-300">index.html</code>, <code className="text-stone-300">css/style.css</code>, and <code className="text-stone-300">js/app.js</code> with original remote asset links. Smaller file size without downloading remote media files.
+              Includes <code className="text-stone-300">index.html</code>, <code className="text-stone-300">css/style.css</code>, and <code className="text-stone-300">js/app.js</code> with original remote asset links.
             </p>
           </div>
 
@@ -228,7 +216,6 @@ export default function ProjectExport({ data }: ProjectExportProps) {
           </div>
         </div>
 
-        {/* Combined Build File Tree */}
         <div className="rounded-xl bg-stone-900 border border-stone-800 p-5 shadow-xl">
           <div className="flex items-center gap-2 mb-3">
             <PackageCheck className="w-4 h-4 text-amber-400" />
@@ -261,7 +248,6 @@ export default function ProjectExport({ data }: ProjectExportProps) {
         </div>
       </div>
 
-      {/* How to Run Locally Guide */}
       <div className="rounded-xl bg-stone-900 border border-stone-800 p-5 shadow-xl space-y-4">
         <div className="flex items-center gap-2">
           <Terminal className="w-4 h-4 text-amber-400" />

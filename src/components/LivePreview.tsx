@@ -28,7 +28,6 @@ export default function LivePreview({ bundleHtml, rawHtml, title, sourceUrl }: L
     setIframeKey((prev) => prev + 1);
   };
 
-  // Re-inject content on mode or key change
   useEffect(() => {
     if (iframeRef.current) {
       const doc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
@@ -49,9 +48,7 @@ export default function LivePreview({ bundleHtml, rawHtml, title, sourceUrl }: L
 
   return (
     <div className="w-full rounded-xl bg-stone-900 border border-stone-800 flex flex-col overflow-hidden shadow-2xl">
-      {/* Top Preview Controls Bar */}
       <div className="px-4 py-3 bg-stone-950 border-b border-stone-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-        {/* Left: Viewport Toggles */}
         <div className="flex items-center gap-1 bg-stone-900 p-1 rounded-lg border border-stone-800">
           <button
             onClick={() => setViewport('desktop')}
@@ -106,7 +103,6 @@ export default function LivePreview({ bundleHtml, rawHtml, title, sourceUrl }: L
           </button>
         </div>
 
-        {/* Center: Bundle vs Raw mode */}
         <div className="flex items-center gap-2">
           <span className="text-stone-400 font-mono text-[11px]">Mode:</span>
           <div className="flex items-center gap-1 bg-stone-900 p-0.5 rounded-md border border-stone-800">
@@ -133,7 +129,6 @@ export default function LivePreview({ bundleHtml, rawHtml, title, sourceUrl }: L
           </div>
         </div>
 
-        {/* Right: Actions */}
         <div className="flex items-center gap-2">
           <button
             onClick={reloadIframe}
@@ -153,7 +148,6 @@ export default function LivePreview({ bundleHtml, rawHtml, title, sourceUrl }: L
         </div>
       </div>
 
-      {/* Security sandbox bar */}
       <div className="px-4 py-1.5 bg-stone-950/60 border-b border-stone-800/80 flex items-center justify-between text-[11px] text-stone-400 font-mono">
         <div className="flex items-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -164,13 +158,11 @@ export default function LivePreview({ bundleHtml, rawHtml, title, sourceUrl }: L
         </div>
       </div>
 
-      {/* Frame Container */}
       <div className="p-4 sm:p-6 bg-stone-950/90 flex justify-center items-center min-h-[550px] overflow-auto">
         <div
           className={`${viewportWidths[viewport]} transition-all duration-300 bg-white rounded-lg shadow-2xl border border-stone-700/60 overflow-hidden flex flex-col`}
           style={{ height: '640px' }}
         >
-          {/* Mock Browser Frame Header */}
           <div className="h-7 bg-stone-200 border-b border-stone-300 px-3 flex items-center justify-between text-[11px] text-stone-600 select-none">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
@@ -185,7 +177,6 @@ export default function LivePreview({ bundleHtml, rawHtml, title, sourceUrl }: L
             <div className="text-[10px] text-stone-400 font-mono">100%</div>
           </div>
 
-          {/* Sandboxed iFrame */}
           <iframe
             key={iframeKey}
             ref={iframeRef}

@@ -39,7 +39,6 @@ export default function MetaInspector({
 
   return (
     <div className="w-full space-y-6">
-      {/* Technology Stack Detected */}
       <div className="rounded-xl bg-stone-900 border border-stone-800 p-5 shadow-xl">
         <div className="flex items-center gap-2 mb-4">
           <Layers className="w-4 h-4 text-amber-400" />
@@ -61,7 +60,6 @@ export default function MetaInspector({
         </div>
       </div>
 
-      {/* OpenGraph & Social Preview Card */}
       <div className="rounded-xl bg-stone-900 border border-stone-800 p-5 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -102,7 +100,6 @@ export default function MetaInspector({
         </div>
       </div>
 
-      {/* Meta Tags Table */}
       <div className="rounded-xl bg-stone-900 border border-stone-800 overflow-hidden shadow-xl">
         <div className="px-4 py-3 bg-stone-950 border-b border-stone-800 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
