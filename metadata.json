@@ -1,0 +1,6 @@
+{
+  "name": "easywebsite",
+  "description": "Paste any website URL to instantly extract its exact HTML, CSS, JavaScript, and assets with full live preview and code export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
